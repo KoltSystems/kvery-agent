@@ -30,40 +30,79 @@ Kvery Agent is a Python-based application designed to manage database connection
 
 ## Configuration
 
-The application configuration is managed through the `config.json` file. Below is an example configuration:
+The application configuration is managed through the `config.json` file.
 
-```json
-{
-    "connections": {
-        "db1": {
-            "type": "mysql",
-            "host": "127.0.0.1",
-            "port": 3306,
-            "username": "root",
-            "password": "",
-            "database": ""
-        },
-        "db2": {
-            "type": "pgsql",
-            "host": "127.0.0.1",
-            "port": 5432,
-            "username": "postgres",
-            "password": "",
-            "database": ""
-        },
-        "db3": {
-            "type": "dblib",
-            "host": "127.0.0.1",
-            "port": 1433,
-            "username": "sa",
-            "password": "",
-            "database": ""
-        }
-    },
-    "port": 1337,
-    "ip_whitelist": ["164.92.167.149"],
-    "log_enabled": true,
-    "logrotate_days": 7,
-    "log_filename": "agent.log",
-    "secret_key": "secret_key"
-}
+## Usage
+
+1. Ensure your database server is running and the configuration file is properly set up.
+2. Run the application:
+
+    ```bash
+    python kvery-agent.py
+    ```
+
+## Running as a Service
+
+To run Kvery Agent as a service on a Unix-based system, you can create a systemd service file.
+
+1. Create a systemd service file:
+
+    ```bash
+    sudo nano /etc/systemd/system/kvery-agent.service
+    ```
+
+2. Add the following content to the file:
+
+    ```ini
+    [Unit]
+    Description=Kvery Agent Service
+    After=network.target
+
+    [Service]
+    ExecStart=/usr/bin/python3 /path/to/kvery-agent.py
+    WorkingDirectory=/path/to/kvery-agent
+    StandardOutput=inherit
+    StandardError=inherit
+    Restart=always
+    User=your-username
+    Environment=PYTHONUNBUFFERED=1
+
+    [Install]
+    WantedBy=multi-user.target
+    ```
+
+    Make sure to replace `/path/to/kvery-agent.py` and `/path/to/kvery-agent` with the actual paths to your script and working directory. Also, replace `your-username` with the user you want to run the service as.
+
+3. Reload systemd to apply the new service:
+
+    ```bash
+    sudo systemctl daemon-reload
+    ```
+
+4. Start the service:
+
+    ```bash
+    sudo systemctl start kvery-agent
+    ```
+
+5. Enable the service to start on boot:
+
+    ```bash
+    sudo systemctl enable kvery-agent
+    ```
+
+## Logging
+
+The application generates logs that help in monitoring its activities. Logs are stored in the file specified in the configuration file and are rotated based on the specified number of days.
+
+## Security
+
+Ensure to update the `ip_whitelist` with the IP addresses that are allowed to access the application to enhance security. The `secret_key` should be set to a strong, unique value.
+
+## Contributing
+
+Contributions are welcome! Please submit a pull request or open an issue for any improvements or bugs.
+
+## License
+
+This project is licensed under the MIT License.
