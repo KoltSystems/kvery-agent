@@ -1,0 +1,18 @@
+{
+    "connections": {
+        "db1": {
+            "type": "mysql",
+            "host": "127.0.0.1",
+            "port": 3306,
+            "username": "root",
+            "password": "",
+            "database": ""
+        }
+    },
+    "port": 1337,
+    "ip_whitelist": ["164.92.167.149"],
+    "log_enabled": true,
+    "logrotate_days": 7,
+    "log_filename": "agent.log",
+    "secret_key": "secret_key"
+}
