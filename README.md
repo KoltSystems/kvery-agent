@@ -25,7 +25,7 @@ Kvery Agent is a Python-based application designed to manage database connection
 2. Install the required Python packages:
 
     ```bash
-    pip install sqlalchemy pymysql psycopg2 pyodbc
+    pip install Flask SQLAlchemy PyMySQL psycopg2-binary pyodbc PyJWT
     ```
 
 ## Configuration
@@ -38,7 +38,7 @@ The application configuration is managed through the `config.json` file.
 2. Run the application:
 
     ```bash
-    python kvery-agent.py
+    python3 kvery-agent.py
     ```
 
 ## Running as a Service
