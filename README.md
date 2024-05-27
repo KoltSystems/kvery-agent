@@ -18,7 +18,7 @@ Kvery Agent is a Python-based application designed to manage database connection
 1. Clone the repository:
 
     ```bash
-    git clone git@github.com:KoltSystems/kvery-agent.git
+    git clone https://github.com/KoltSystems/kvery-agent.git
     cd kvery-agent
     ```
 
