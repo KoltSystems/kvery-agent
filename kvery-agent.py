@@ -4,6 +4,7 @@ import logging
 from logging.handlers import TimedRotatingFileHandler
 from flask import Flask, request, jsonify
 from sqlalchemy import create_engine, text
+from sqlalchemy.exc import SQLAlchemyError
 import json
 import jwt
 import pyodbc
@@ -75,7 +76,7 @@ def get_db_connection(conn):
     if db_type == 'mysql':
         engine = create_engine(f"mysql+pymysql://{username}:{password}@{host}:{port}/{database}")
     elif db_type == 'pgsql':
-        engine = create_engine(f"postgresql://{username}:{password}@{host}:{port}/{database}")
+        engine = create_engine(f"postgresql+psycopg2://{username}:{password}@{host}:{port}/{database}")
     elif db_type == 'dblib':
         connection_string = f"DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={host},{port};DATABASE={database};UID={username};PWD={password}"
         engine = create_engine(f"mssql+pyodbc:///?odbc_connect={connection_string}")
@@ -123,12 +124,12 @@ def execute_query():
     try:
         result = connection.execute(text(sql))
         if result.returns_rows:
-            rows = [dict(row) for row in result.fetchall()]
+            rows = [dict(row._mapping) for row in result.fetchall()]
             return jsonify({'status': 1, 'response': rows})
         else:
             response_code = 1 if result.rowcount > 0 else 0
             return jsonify({'status': 1, 'response': response_code})
-    except Exception as e:
+    except SQLAlchemyError as e:
         logging.error(f"Error while executing SQL query: {e}")
         return jsonify({'status': 0, 'response': str(e)}), 500
     finally:
