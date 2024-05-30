@@ -11,7 +11,9 @@ Kvery Agent is a Python-based application designed to manage database connection
 ## Prerequisites
 
 - Python 3.x
-- MySQL, PostgreSQL, or MSSQL server
+- MySQL
+- PostgreSQL
+- ODBC Driver 17 for SQL Server (for MSSQL support)
 
 ## Installation
 
@@ -27,6 +29,28 @@ Kvery Agent is a Python-based application designed to manage database connection
     ```bash
     pip install Flask SQLAlchemy PyMySQL psycopg2-binary pyodbc PyJWT
     ```
+
+3. Install the ODBC Driver 17 for SQL Server:
+
+    - **Ubuntu/Debian**:
+      ```bash
+      sudo su
+      curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
+      curl https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/prod.list > /etc/apt/sources.list.d/mssql-release.list
+      sudo apt-get update
+      sudo ACCEPT_EULA=Y apt-get install -y msodbcsql17
+      sudo apt-get install -y unixodbc-dev
+      ```
+
+    - **CentOS/RHEL**:
+      ```bash
+      sudo su
+      curl https://packages.microsoft.com/keys/microsoft.asc | sudo tee /etc/pki/rpm-gpg/Microsoft.asc
+      curl https://packages.microsoft.com/config/rhel/$(rpm -E %{rhel})/prod.repo | sudo tee /etc/yum.repos.d/msprod.repo
+      sudo yum remove unixODBC # to avoid conflicts
+      sudo ACCEPT_EULA=Y yum install -y msodbcsql17
+      sudo yum install -y unixODBC-devel
+      ```
 
 ## Configuration
 
