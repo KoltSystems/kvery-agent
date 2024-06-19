@@ -83,7 +83,7 @@ def get_db_connection(conn):
     else:
         return None
 
-    return engine.connect()
+    return engine
 
 # Endpoint for executing SQL queries
 @app.route('/execute', methods=['GET'])
@@ -116,21 +116,27 @@ def execute_query():
         logging.error(f"Unauthorized IP address: {client_ip}")
         return jsonify({'status': 0, 'response': 'Unauthorized IP address'}), 403
 
-    connection = get_db_connection(conn)
-    if not connection:
+    engine = get_db_connection(conn)
+    if not engine:
         logging.error(f"Invalid connection or database configuration not found for '{conn}'.")
         return jsonify({'status': 0, 'response': 'Invalid connection or database configuration not found'}), 404
 
+    connection = engine.connect()
+    transaction = connection.begin()
     try:
         result = connection.execute(text(sql))
         if result.returns_rows:
             rows = [dict(row._mapping) for row in result.fetchall()]
+            transaction.commit()
             return jsonify({'status': 1, 'response': rows})
         else:
             response_code = 1 if result.rowcount > 0 else 0
+            logging.info(f"Rows affected: {result.rowcount}")
+            transaction.commit()
             return jsonify({'status': 1, 'response': response_code})
     except SQLAlchemyError as e:
         logging.error(f"Error while executing SQL query: {e}")
+        transaction.rollback()
         return jsonify({'status': 0, 'response': str(e)}), 500
     finally:
         connection.close()

@@ -115,6 +115,26 @@ To run Kvery Agent as a service on a Unix-based system, you can create a systemd
     sudo systemctl enable kvery-agent
     ```
 
+## Manage the Service
+
+    Start the service:
+
+    ```bash
+    sudo systemctl start kvery-agent
+    ```
+
+    Stop the service:
+
+    ```bash
+    sudo systemctl stop kvery-agent
+    ```
+
+    Restart the service:
+
+    ```bash
+    sudo systemctl restart kvery-agent
+    ```
+
 ## Logging
 
 The application generates logs that help in monitoring its activities. Logs are stored in the file specified in the configuration file and are rotated based on the specified number of days.
