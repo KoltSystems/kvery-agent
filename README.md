@@ -117,19 +117,19 @@ To run Kvery Agent as a service on a Unix-based system, you can create a systemd
 
 ## Manage the Service
 
-    Start the service:
+1. Start the service:
 
     ```bash
     sudo systemctl start kvery-agent
     ```
 
-    Stop the service:
+2. Stop the service:
 
     ```bash
     sudo systemctl stop kvery-agent
     ```
 
-    Restart the service:
+3. Restart the service:
 
     ```bash
     sudo systemctl restart kvery-agent
