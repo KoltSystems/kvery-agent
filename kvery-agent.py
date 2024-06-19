@@ -126,9 +126,10 @@ def execute_query():
     try:
         result = connection.execute(text(sql))
         if result.returns_rows:
+            columns = list(result.keys())
             rows = [dict(row._mapping) for row in result.fetchall()]
             transaction.commit()
-            return jsonify({'status': 1, 'response': rows})
+            return jsonify({'status': 1, 'response': rows, 'columns': columns})
         else:
             response_code = 1 if result.rowcount > 0 else 0
             logging.info(f"Rows affected: {result.rowcount}")
