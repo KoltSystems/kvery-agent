@@ -135,13 +135,18 @@ def execute_query():
             logging.info(f"Rows affected: {result.rowcount}")
             
             if sql.strip().lower().startswith('insert'):
-                if engine.dialect.name == 'mysql':
+                if engine.dialect.name == 'postgresql':
+                    modified_sql = sql.strip().rstrip(';') + ' RETURNING id'
+                    result = connection.execute(text(modified_sql))
+                    last_inserted_id = result.scalar()
+                elif engine.dialect.name == 'mysql':
+                    result = connection.execute(text(sql))
                     last_inserted_id = connection.execute(text('SELECT LAST_INSERT_ID()')).scalar()
-                elif engine.dialect.name == 'postgresql':
-                    last_inserted_id = connection.execute(text(sql + ' RETURNING id')).scalar()
                 elif engine.dialect.name == 'mssql':
+                    result = connection.execute(text(sql))
                     last_inserted_id = connection.execute(text('SELECT SCOPE_IDENTITY()')).scalar()
                 else:
+                    result = connection.execute(text(sql))
                     last_inserted_id = None
                     
                 logging.info(f"Last inserted ID: {last_inserted_id}")
