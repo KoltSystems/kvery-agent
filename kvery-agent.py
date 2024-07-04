@@ -135,7 +135,15 @@ def execute_query():
             logging.info(f"Rows affected: {result.rowcount}")
             
             if sql.strip().lower().startswith('insert'):
-                last_inserted_id = connection.execute(text('SELECT LAST_INSERT_ID()')).scalar()
+                if engine.dialect.name == 'mysql':
+                    last_inserted_id = connection.execute(text('SELECT LAST_INSERT_ID()')).scalar()
+                elif engine.dialect.name == 'postgresql':
+                    last_inserted_id = connection.execute(text(sql + ' RETURNING id')).scalar()
+                elif engine.dialect.name == 'mssql':
+                    last_inserted_id = connection.execute(text('SELECT SCOPE_IDENTITY()')).scalar()
+                else:
+                    last_inserted_id = None
+                    
                 logging.info(f"Last inserted ID: {last_inserted_id}")
                 transaction.commit()
                 return jsonify({'status': 1, 'response': response_code, 'last_inserted_id': last_inserted_id})
