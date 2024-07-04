@@ -133,6 +133,13 @@ def execute_query():
         else:
             response_code = 1 if result.rowcount > 0 else 0
             logging.info(f"Rows affected: {result.rowcount}")
+            
+            if sql.strip().lower().startswith('insert'):
+                last_inserted_id = connection.execute(text('SELECT LAST_INSERT_ID()')).scalar()
+                logging.info(f"Last inserted ID: {last_inserted_id}")
+                transaction.commit()
+                return jsonify({'status': 1, 'response': response_code, 'last_inserted_id': last_inserted_id})
+            
             transaction.commit()
             return jsonify({'status': 1, 'response': response_code})
     except SQLAlchemyError as e:
