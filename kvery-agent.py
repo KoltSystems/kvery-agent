@@ -85,6 +85,7 @@ def get_db_connection(conn):
 
     return engine
 
+# Function to get the last inserted ID based on the database type
 def get_last_inserted_id(connection, db_type):
     if db_type == 'mysql':
         return connection.execute(text('SELECT LAST_INSERT_ID()')).scalar()
@@ -97,7 +98,7 @@ def get_last_inserted_id(connection, db_type):
     elif db_type == 'dblib':
         return connection.execute(text('SELECT @@IDENTITY AS last_insert_id')).scalar()
     else:
-        raise ValueError(f"Unsupported database type: {db_type}")
+        return 0
 
 # Endpoint for executing SQL queries
 @app.route('/execute', methods=['GET'])
