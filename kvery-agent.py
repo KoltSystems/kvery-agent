@@ -85,6 +85,20 @@ def get_db_connection(conn):
 
     return engine
 
+def get_last_inserted_id(connection, db_type):
+    if db_type == 'mysql':
+        return connection.execute(text('SELECT LAST_INSERT_ID()')).scalar()
+    elif db_type == 'postgresql':
+        return connection.execute(text('SELECT lastval()')).scalar()
+    elif db_type == 'pgsql':
+        return connection.execute(text('SELECT lastval()')).scalar()
+    elif db_type == 'mssql':
+        return connection.execute(text('SELECT @@IDENTITY AS last_insert_id')).scalar()
+    elif db_type == 'dblib':
+        return connection.execute(text('SELECT @@IDENTITY AS last_insert_id')).scalar()
+    else:
+        raise ValueError(f"Unsupported database type: {db_type}")
+
 # Endpoint for executing SQL queries
 @app.route('/execute', methods=['GET'])
 def execute_query():
@@ -135,20 +149,7 @@ def execute_query():
             logging.info(f"Rows affected: {result.rowcount}")
             
             if sql.strip().lower().startswith('insert'):
-                if engine.dialect.name == 'postgresql':
-                    modified_sql = sql.strip().rstrip(';') + ' RETURNING id'
-                    result = connection.execute(text(modified_sql))
-                    last_inserted_id = result.scalar()
-                elif engine.dialect.name == 'mysql':
-                    result = connection.execute(text(sql))
-                    last_inserted_id = connection.execute(text('SELECT LAST_INSERT_ID()')).scalar()
-                elif engine.dialect.name == 'mssql':
-                    result = connection.execute(text(sql))
-                    last_inserted_id = connection.execute(text('SELECT SCOPE_IDENTITY()')).scalar()
-                else:
-                    result = connection.execute(text(sql))
-                    last_inserted_id = None
-                    
+                last_inserted_id = get_last_inserted_id(connection, engine.dialect.name)
                 logging.info(f"Last inserted ID: {last_inserted_id}")
                 transaction.commit()
                 return jsonify({'status': 1, 'response': response_code, 'last_inserted_id': last_inserted_id})
