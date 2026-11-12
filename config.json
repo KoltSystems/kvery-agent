@@ -14,5 +14,7 @@
     "log_enabled": true,
     "logrotate_days": 7,
     "log_filename": "agent.log",
-    "secret_key": "secret_key"
+    "secret_key": "",
+    "date_format": "iso",
+    "require_expiry": true
 }

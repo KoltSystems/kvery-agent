@@ -1,0 +1,7 @@
+# Log files of the agent (the name is set by "log_filename" in config.json; rotated files get a date suffix)
+*.log
+*.log.*
+
+# Python bytecode
+__pycache__/
+*.pyc

@@ -1,0 +1,10 @@
+# Packages the agent needs
+Flask>=2.2
+SQLAlchemy>=1.4
+PyJWT>=2.0
+waitress>=2.1
+
+# Database drivers: install the one of each database type in use
+#   MySQL / MariaDB:  PyMySQL>=1.0
+#   PostgreSQL:       psycopg2-binary>=2.9
+#   SQL Server:       pyodbc>=4.0 (with the Microsoft ODBC driver, see README.md)
