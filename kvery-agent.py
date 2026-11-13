@@ -59,6 +59,9 @@ DEFAULT_DATE_FORMAT = 'http'
 LOG_LEVELS = ('DEBUG', 'INFO', 'WARNING', 'ERROR')
 DEFAULT_LOG_LEVEL = 'INFO'
 
+# Address the server listens on when the 'host' key is missing or empty: every interface
+DEFAULT_HOST = '0.0.0.0'
+
 # Optional keys that hold a whole number, each with its default and its smallest allowed value:
 #   threads            statements the waitress server runs at the same time; further requests wait for a free thread
 #   connection_limit   sockets the waitress server keeps open at the same time, its own two included
@@ -471,7 +474,7 @@ def execute_query():
 
 
 if __name__ == '__main__':
-    host = config.get('host') or '0.0.0.0'
+    host = config.get('host') or DEFAULT_HOST
     port = config['port']
     try:
         from waitress import serve
