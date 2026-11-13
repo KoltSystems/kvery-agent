@@ -5,3 +5,6 @@
 # Python bytecode
 __pycache__/
 *.pyc
+
+# Virtual environment of the installation (see README)
+.venv/

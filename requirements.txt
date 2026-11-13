@@ -2,7 +2,7 @@
 Flask>=2.2
 SQLAlchemy>=1.4
 PyJWT>=2.0
-waitress>=2.1
+waitress>=3.0.1
 
 # Database drivers: install the one of each database type in use
 #   MySQL / MariaDB:  PyMySQL>=1.0

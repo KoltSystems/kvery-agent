@@ -50,6 +50,10 @@ RECOMMENDED_SECRET_LENGTH = 32
 SUPPORTED_ALGORITHMS = ('HS256', 'HS384', 'HS512')
 DEFAULT_ALGORITHMS = ['HS256']
 
+# Oldest major version of PyJWT the agent runs with: PyJWT 1.x ignores the 'require' option of jwt.decode(), so with
+# 'require_expiry' it would accept a token without an expiry time or a one-time ID
+MIN_PYJWT_MAJOR_VERSION = 2
+
 # How date and date-time values are written into the answer: 'http' = HTTP date text (e.g.
 # "Thu, 02 Jan 2025 00:00:00 GMT"), 'iso' = ISO 8601 text with a space between the date and the time (e.g.
 # "2025-01-02 00:00:00")
@@ -128,6 +132,22 @@ def validate_config(config):
         raise ValueError("The 'host' key of the configuration file must be an IP address.")
 
 
+def check_pyjwt_version():
+    """Ends the program when the installed PyJWT is older than MIN_PYJWT_MAJOR_VERSION or its version cannot be
+    read."""
+    version = str(getattr(jwt, '__version__', ''))
+    try:
+        major_version = int(version.split('.')[0])
+    except ValueError:
+        major_version = 0
+    if major_version < MIN_PYJWT_MAJOR_VERSION:
+        logging.error(
+            f"PyJWT {MIN_PYJWT_MAJOR_VERSION}.0 or newer is required (installed: {version or 'unknown version'}). "
+            "Install the packages of requirements.txt."
+        )
+        sys.exit(1)
+
+
 def load_config(config_path):
     """Returns the validated configuration of the JSON file; ends the program when it cannot be used."""
     try:
@@ -144,6 +164,7 @@ def load_config(config_path):
     sys.exit(1)
 
 
+check_pyjwt_version()
 config = load_config(CONFIG_PATH)
 
 # Log file with daily rotation and console output at the level of 'log_level', or no logging at all. Statements and
